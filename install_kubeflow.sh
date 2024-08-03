@@ -1024,12 +1024,14 @@ oc adm policy add-cluster-role-to-user cluster-admin system:serviceaccount:kubef
 # HTPasswd & Default User
 # See: https://computingforgeeks.com/manage-openshift-okd-cluster-users-using-htpasswd-identity-provider/
 yum -y install httpd-tools
-htpasswd -c -B -b $KUBEFLOW_BASE_DIR/ocp_users.htpasswd admin@example.com 12341234
-htpasswd -Bb $KUBEFLOW_BASE_DIR/ocp_users.htpasswd user@example.com 12341234
-oc create secret generic htpass-secret \
-  --from-file=htpasswd=$KUBEFLOW_BASE_DIR/ocp_users.htpasswd \
-  -n openshift-config
-oc patch oauth cluster --type=merge -p '{"spec":{"identityProviders": [{"htpasswd": {"fileData": {"name": "htpass-secret"}}, "mappingMethod": "claim", "name": "Local Password","type":"HTPasswd"}]}}'
+oc extract secret/htpass-secret -n openshift-config --to $KUBEFLOW_BASE_DIR/ --confirm
+htpasswd -Bb $KUBEFLOW_BASE_DIR/htpasswd admin@example.com 12341234
+htpasswd -Bb $KUBEFLOW_BASE_DIR/htpasswd user@example.com 12341234
+oc set data secret/htpass-secret --from-file htpasswd=$KUBEFLOW_BASE_DIR/htpasswd -n openshift-config
+# oc create secret generic htpass-secret \
+#  --from-file=htpasswd=$KUBEFLOW_BASE_DIR/ocp_users.htpasswd \
+#  -n openshift-config
+# oc patch oauth cluster --type=merge -p '{"spec":{"identityProviders": [{"htpasswd": {"fileData": {"name": "htpass-secret"}}, "mappingMethod": "claim", "name": "Local Password","type":"HTPasswd"}]}}'
 
 # Get UI address
 # TODO: Get rid of insecure routes
