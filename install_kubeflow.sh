@@ -249,7 +249,7 @@ esac
 if [ -d "$MANIFESTS" ]; then
     echo "Warning: $MANIFESTS already exists; skipping git clone."
 else
-    git clone --branch $kubeflow_version https://github.com/lehrig/kubeflow-ppc64le-manifests.git $MANIFESTS
+    git clone --branch $kubeflow_version https://github.com/xjasonliu/kubeflow-ppc64le-manifests.git $MANIFESTS
 fi
 
 ###########################################################################################################################
